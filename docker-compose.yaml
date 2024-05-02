@@ -1,0 +1,14 @@
+version: '3'
+services:
+  svs_quarto:
+      build:
+          context: "."
+          dockerfile: "./Dockerfile"
+      image: img_quarto
+      container_name: cnt_quarto
+      volumes:
+          - .:/workdir
+      restart: on-failure
+      privileged: true
+      # command: bash -c "chmod +x ./app-run.sh ; ./app-run.sh -o init"
+      command: bash -c "while true; do echo 'while loop to sustain the runtime of the current container.'; sleep 1800; done"

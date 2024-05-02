@@ -1,0 +1,175 @@
+---
+title: "QuartoとLibreofficeによる、マークダウン記法でのプレゼンテーション内容をレンダリングファイルに自動変換" # スライドのタイトル
+subtitle: "A Technical Tutorial" # スライドのサブタイトル
+# author: Y. WU
+bibliography:
+    - ref.bib
+csl: ../template/ieee-with-url.csl
+date: today # スライドの日付を今日の日付にする
+date-format: "YYYY[年]M[月]D[日]"
+lang: ja # 目次や図表のキャプションを日本語にする
+
+format:
+  pptx # powerpoint形式で出力したいので、pptxを指定
+reference-doc: ../template/template_for_pandoc.pptx # このqmdファイルと同じディレクトリにある場合は、ファイル名だけでOK
+# output-file: output-file-name # 出力ファイル名を指定
+slide-level: 2 # マークダウンの深さ2の見出しをスライドタイトルになるように明示的に指定
+toc: true # 目次を表示する
+toc-depth: 2 # マークダウンの深さ3以下の見出しは目次に表示されない
+
+---
+
+
+
+## 概要
+
+
+
+* 目的
+  * マークダウン記法でのプレゼンテーション内容をレンダリングファイルに自動変換する手順を共有
+
+* 処理概要
+  * マークダウン`md`記法での内容をテンプレート（`pptx`のマスタスライド、`cls`、`bib`）でレンダリング
+  * レンダリングされた`pptx`を`pdf`に自動変換
+
+
+
+
+
+## メリットとデメリット
+
+
+
+* メリット
+  * テンプレートによる、レンダリングのスタイルとレイアウトをチーム内統一し、再現性[@why-quarto]を向上させる
+  * 内容をテンプレートを分けって、内容のバージョンの制御性を向上させる
+  * 完全にOSSツールでMicrosoft Office様なコンテンツレンダリングをできる
+* デメリット
+  * マークダウン記法を練習しない内容（図[@mermaid-user-guide]、表、箇条書き、画像、リンクなど）の作成がしにくい
+  * 更新した内容をレンダリング処理しない、レンダリング結果を見えない
+
+
+
+
+
+## OSSツールによる、バッチ処理フロー
+
+* DockerDesktop[^DockerDesktop]で、一般的なPC端末に実行環境を構築
+* Quarto[^quarto]にっよる、マークダウン`md`記法での内容をテンプレート（`pptx`のマスタスライド、`cls`、`bib`）でレンダリング
+  * `Md`ファイルでプレゼンテーション内容（図、表、箇条書き、画像、リンクなど）を作成
+  * `pptx`のマスタスライドで、表示のレイアウトとスタイルを一元管理
+  * `bib`ファイルによる、引用資料を一元管理
+  * `cls`ファイルで、引用資料一覧のスタイルを一元管理
+* Libreoffice[^libreoffice]による、レンダリングされた`pptx`を`pdf`に自動変換
+
+
+
+[^DockerDesktop]: コンテナー化アプリケーションやマイクロサービスを構築し共有することができるアプリケーション。Linux やMac や Windows に簡単にインストールできる。
+[^quarto]: QuartoはPandocベースのオープンソース科学/技術出版システムである。
+[^libreoffice]: オープンソースソフトのオフィスソフトである、文書作成・表計算・プレゼンテーション・図形描画などのソフトウェアで構成され、「マイクロソフトオフィス」と類似した操作性や機能も備えている。
+
+```{mermaid}
+%%{
+	init: {
+		'theme': 'base',
+		"flowchart" : {
+			"htmlLabels": false,
+			"fontFamily" : "arial",
+			"curve" : "linear",
+			"defaultRenderer": "elk"
+		}
+	}
+}%%
+flowchart LR
+	subgraph ALL["QMDファイルをテンプレートのスタイルに合わせてレンダリングする"]
+	subgraph MNT["マウントされた外部フォルダー"]
+		subgraph DIR_DOCS["レンダリング対象ドキュメントのフォルダー"]
+			FILE_QMD[["QMDファイル（Markdown形式）"]]
+			FILE_PPTX[["PPTXファイル（PPTX形式）"]]
+			FILE_PDF[["PDFファイル（PDF形式）"]]
+		end
+		subgraph DIR_TEMP["テンプレドキュメントのフォルダー"]
+			TEMP_CLS[["引用スタイルの定義ファイル
+			（CLS形式）"]]
+			TEMP_PPTX[["MSO PPTXテンプレート
+			（PPTX形式）"]]
+		end
+	end
+	
+	subgraph CNT["コンテナ
+	（QuartoとLibreofficeの実行環境）"]
+		Quarto(["①Quartoでのレンダリング"])
+		Libreoffice(["②Libreofficeでのレンダリング"])
+	end
+	end
+FILE_QMD-->|"QMDファイルを
+読み取る"|Quarto
+TEMP_CLS-->|"CLSテンプレを
+読み取る"|Quarto
+TEMP_PPTX-->|"PPTXテンプレを
+読み取る"|Quarto
+
+Quarto-->|"QMDファイルを
+PPTX形式で
+レンダリング"|FILE_PPTX
+
+FILE_PPTX-->|"PPTXファイルを
+読み取る"|Libreoffice
+Libreoffice-->|"PPTXファイルを
+PDFに変換"|FILE_PDF
+
+linkStyle 0 stroke-width:4px,color:green,background-color:lime;
+linkStyle 1 stroke-width:4px,color:green,background-color:lime;
+linkStyle 2 stroke-width:4px,color:green,background-color:lime;
+
+linkStyle 3 stroke-width:4px,color:green,background-color:lime;
+
+linkStyle 4 stroke-width:4px,color:blue,background-color:lime;
+linkStyle 5 stroke-width:4px,color:blue,background-color:lime;
+
+
+```
+
+
+
+
+
+## 実行環境の初期化と、レンダリングファイルの作成
+
+```bash
+# Prerequisite: Get the latest version of docker desktop installed 
+
+# [Step 1-1] Enter the working directory "quarto"
+cd quarto_render
+# [Step 1-2] Build the container
+docker-compose build
+# [Step 1-3] Shut down the old container if exists
+docker-compose down
+# [Step 1-4] Start the container
+docker-compose up -d
+
+# [Step 2-1] Enter the command line interface of the container
+docker exec -it cnt_quarto bash
+# [Step 2-2] Execute the command line to render presentation file
+# - app-run.sh [path-to-the-qmd-file]
+./app-run.sh docs/README.qmd
+
+```
+
+
+
+## 初期化された実行環境（DockerDesktop）のCLIを利用
+
+
+
+![DockerDesktopでレンダリング処理のコマンドを実行する](./static/quarto_render_cli.png)
+
+
+
+
+
+## 参照
+
+::: {#refs}
+:::
+

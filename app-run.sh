@@ -1,11 +1,4 @@
 #!/bin/bash
-###################################################################
-#Script Name	:run.sh
-#Description	:Quartoでqmdをpptxとpdfに変換
-#Args           :
-#Author       	:Y.WU
-#Email         	:y-wu@ieee.org
-###################################################################
 
 fp_qmd="$1"
 

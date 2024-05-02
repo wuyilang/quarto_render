@@ -2,22 +2,33 @@
 
 fp_qmd="$1"
 
-# download template if not exist
-url_dropbox="https://www.dropbox.com/scl/fo/65lyqcspfindi4fqqc5dv/AA_cCzOHXOItJo4zyA3tAdY"
-dp_temp="template"
-fn_temp_csl="ieee-with-url.csl"
-fn_temp_pptx="template_for_pandoc.pptx"
+# # download template if not exist
+# url_dropbox="https://www.dropbox.com/scl/fo/65lyqcspfindi4fqqc5dv/AA_cCzOHXOItJo4zyA3tAdY"
+# dp_temp="template"
+# fn_temp_csl="ieee-with-url.csl"
+# fn_temp_pptx="template_for_pandoc.pptx"
+# fn_temp_zip="template.zip"
 
-fp_temp_csl="${dp_temp}/${fn_temp_csl}"
-fp_temp_pptx="${dp_temp}/${fn_temp_pptx}"
-mkdir -p "${dp_temp}"
-if [ ! -f "${fp_temp_csl}" ]; then
-	wget "${url_dropbox}/${fn_temp_csl}" -O ${fp_temp_csl}
-fi
+# fp_temp_csl="${dp_temp}/${fn_temp_csl}"
+# fp_temp_pptx="${dp_temp}/${fn_temp_pptx}"
+# fp_temp_zip="${fn_temp_zip}"
+# mkdir -p "${dp_temp}"
+# if [ ! -f "${fp_temp_csl}" ]; then
+# 	echo Downloadin file: "${url_dropbox}/${fn_temp_csl}"
+# 	wget "${url_dropbox}/${fn_temp_csl}" -O ${fp_temp_csl}
+# fi
 
-if [ ! -f "${fp_temp_pptx}" ]; then
-	wget "${url_dropbox}/${fn_temp_pptx}" -O ${fp_temp_pptx}
-fi
+# if [ ! -f "${fp_temp_pptx}" ]; then
+# 	echo Downloadin file: "${url_dropbox}/${fn_temp_pptx}"
+# 	wget "${url_dropbox}/${fn_temp_pptx}" -O ${fp_temp_pptx}
+# fi
+
+# if [ ! -f "${fp_temp_csl}" ] || [ ! -f "${fp_temp_pptx}" ]; then
+# 	echo Downloadin file: "${url_dropbox}/${fn_temp_zip}"
+# 	wget "${url_dropbox}/${fn_temp_zip}" -O ${fp_temp_zip}
+# 	unzip "${fp_temp_zip}"
+# 	rm -rf "${fp_temp_zip}"
+# fi
 
 if [ ! -z "${fp_qmd}" ]; then
 	if [ "${fp_qmd}" ]; then
